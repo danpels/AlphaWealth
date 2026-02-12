@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Nav } from "@/components/app/Nav";
-import { AppHeader } from "@/components/app/AppHeader";
+import { AppSidebar } from "@/components/app/AppSidebar";
+import { MobileNav } from "@/components/app/MobileNav";
+import { AppContentHeader } from "@/components/app/AppContentHeader";
 
 export default async function AppLayout({
   children,
@@ -14,26 +15,25 @@ export default async function AppLayout({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("onboarding_completed_at")
+    .select("onboarding_completed_at, full_name")
     .eq("id", user.id)
     .single();
 
   if (!profile?.onboarding_completed_at) redirect("/onboarding");
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <aside className="hidden md:flex md:w-56 md:flex-shrink-0 md:border-r md:border-border md:bg-card/50">
-        <Nav />
+    <div className="flex min-h-screen">
+      <aside className="hidden md:block">
+        <AppSidebar
+          userName={profile?.full_name ?? null}
+          userEmail={user.email ?? null}
+        />
       </aside>
-      <div className="flex-1 flex flex-col pb-20 md:pb-0 md:min-h-screen">
-        <AppHeader />
-        <main className="flex-1">
-          {children}
-        </main>
+      <div className="flex flex-1 flex-col pb-20 md:pb-0">
+        <AppContentHeader />
+        <main className="flex-1 bg-background">{children}</main>
+        <MobileNav />
       </div>
-      <aside className="md:hidden">
-        <Nav />
-      </aside>
     </div>
   );
 }
