@@ -329,18 +329,26 @@ export function ProjectSuccessView({
                     strokeDasharray="4 2"
                     dot={(props) => {
                       const { cx, cy, payload } = props;
-                      if (!payload?.isMilestone || (payload.age !== currentAge && payload.label === "TODAY")) return null;
+                    
+                      if (
+                        !payload?.isMilestone ||
+                        (payload.age !== currentAge && payload.label === "TODAY")
+                      ) {
+                        return <g />; // ✅ FIX
+                      }
+                    
                       return (
                         <circle
                           cx={cx}
                           cy={cy}
-                          r={4}
-                          fill="hsl(var(--chart-2))"
-                          stroke="hsl(var(--background))"
+                          r={5}
+                          fill="#22c55e"
+                          stroke="white"
                           strokeWidth={2}
                         />
                       );
                     }}
+                    
                   />
                 </ComposedChart>
               </ResponsiveContainer>
